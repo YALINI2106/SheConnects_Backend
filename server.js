@@ -159,6 +159,7 @@ app.get("/", (req, res) => {
 
 // Signup
 app.post("/api/signup", async (req, res) => {
+  console.log(req.body);
   const { name, email, number, password } = req.body;
 
   try {
