@@ -158,24 +158,53 @@ app.get("/", (req, res) => {
 });
 
 // Signup
+// Signup
 app.post("/api/signup", async (req, res) => {
+
   console.log("BODY DATA:", req.body);
-  const { name, email, number, password } = req.body;
+
+  const { name, email, number, phone, password } = req.body;
 
   try {
+
+    const mobileNumber = number || phone;
+
+    if (!mobileNumber) {
+      return res.status(400).json({
+        message: "Phone number is required"
+      });
+    }
+
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
-      return res.status(400).json({ message: "Email already registered" });
+      return res.status(400).json({
+        message: "Email already registered"
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, email, number, password: hashedPassword });
+
+    const newUser = new User({
+      name,
+      email,
+      number: mobileNumber,
+      password: hashedPassword
+    });
+
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({
+      message: "User registered successfully"
+    });
+
   } catch (err) {
+
     console.error("Error in registration:", err);
-    res.status(500).json({ message: "Error during registration" });
+
+    res.status(500).json({
+      message: "Error during registration"
+    });
   }
 });
 
